@@ -1,0 +1,163 @@
+#define ultimate_matrix
+/************************* Matrix **************************/
+// FOR NORMAL PEOPLE:
+#ifndef ultimate_matrix
+const int64_t length = 2;
+struct matrix{
+	int64_t m[length][length];
+};
+matrix operator *(matrix a, matrix b)
+{
+	matrix c;
+	fr(i,length) fr(j,length){
+		c.m[i][j] = 0;
+		fr(t,length) c.m[i][j] = (c.m[i][j] + (a.m[i][t] * b.m[t][j]) % MODULO) % MODULO;
+	}
+	return c;
+}
+matrix operator ^(matrix a, int64_t n)
+{
+	if (n == 1) return a;
+	matrix temp = a ^ (n / 2);
+	temp = temp * temp;
+	if (n % 2 == 0) return temp;
+	else return (temp * a);
+}
+/***********************************************************/
+#else
+/******************** ULTIMATE Matrix **********************/
+template<int32_t _MODULO> struct Modular{
+	int64_t v;
+	explicit operator int32_t() const {return v;} //explicitly -> don't silently convert to int32_t
+	Modular() {v = 0;}
+	Modular(int64_t _v) 
+	{
+		v = int32_t((-_MODULO < _v && _v < _MODULO) ? _v : _v % _MODULO); 
+		if (v < 0) v += _MODULO;
+	}
+	friend ostream& operator << (ostream& out, const Modular &n)
+	{
+		return out << int32_t(n);
+	}
+	friend istream& operator >> (istream& in, const Modular &n)
+	{
+		int64_t _v;
+		in >> _v;
+		n = Modular(_v);
+		return in;
+	}
+
+	friend bool operator == (const Modular &a, const Modular &b) {return a.v == b.v;}
+	friend bool operator != (const Modular &a, const Modular &b) {return a.v != b.v;}
+	friend bool operator < (const Modular &a, const Modular &b) {return a.v < b.v;}
+	friend bool operator > (const Modular &a, const Modular &b) {return a.v > b.v;}
+	
+	Modular& operator += (const Modular &m)
+	{
+		if ((v += m.v) > _MODULO)
+			v -= _MODULO;
+		return *this;
+	}
+	Modular& operator -= (const Modular &m)
+	{
+		if ((v -= m.v) < 0)
+			v += _MODULO;
+		return *this;
+	}
+	Modular& operator *= (const Modular &m)
+	{
+		v = int32_t((int64_t) v * m.v % _MODULO);
+		return *this;
+	}
+	Modular& operator /= (const Modular &m)
+	{
+		return (*this) *= inv(m);
+	}
+	Modular operator - () const {return Modular(-v);}
+
+	Modular &operator ++() {return *this += 1;}
+	Modular &operator --() {return *this -= 1;}
+	friend Modular pow(Modular a, int64_t p)
+	{
+		Modular ans = 1;
+		assert(p >= 0);
+		for(; p; p /= 2, a *= a)
+			if (p & 1)
+				ans *= a;
+		return ans;
+	}
+	friend Modular inv(const Modular &a)
+	{
+		assert(a.v != 0);
+		return pow(a, _MODULO - 2);
+	}
+	friend Modular operator + (Modular a, const Modular &b) {return a += b;}
+	friend Modular operator - (Modular a, const Modular &b) {return a -= b;}
+	friend Modular operator * (Modular a, const Modular &b) {return a *= b;}
+	friend Modular operator / (Modular a, const Modular &b) {return a /= b;}
+	friend Modular operator ++ (Modular &a, int32_t)
+	{
+		Modular r = a;
+		++ a;
+		return r;
+	}
+	friend Modular operator -- (Modular &a, int32_t)
+	{
+		Modular r = a;
+		-- a;
+		return r;
+	}
+};
+
+template <class T> struct matrix{
+	vector<vector<T>> m;
+	int64_t r, c;
+	matrix() : r(), c() {}
+	matrix(int64_t r, int64_t c, T x) : r(r), c(c), m(r, vector<T> (c, x)) {}
+	matrix(int64_t n) : matrix (n, n, 0) 	//identity matrix
+	{
+		for(int64_t i = 0; i < n; i ++)
+			m[i][i] = 1;
+	}
+	matrix operator * (matrix<T> b)
+	{
+		matrix<T> a = *this;
+		assert(a.c == b.r);
+		matrix<T> c(a.r, b.c, 0);
+		{
+			for(int64_t i = 0; i < a.r; i ++)
+				for(int64_t k = 0; k < a.c; k ++)
+				for(int64_t j = 0; j < b.c; j ++)
+						c.m[i][j] = c.m[i][j] + a.m[i][k] * b.m[k][j];
+		}
+		return c;
+	}
+	matrix operator ^ (int64_t b)
+	{
+		matrix<T> a = *this;
+		assert(a.r == a.c);
+		matrix<T> o(a.r);
+		while(b)
+		{
+			if (b % 2)
+				o = o * a;
+			a = a * a;
+			b /= 2;
+		}
+		return o;
+	}
+	void print()
+	{
+		for(int64_t i = 0; i < r; i ++)
+		{
+			for(int64_t j = 0; j < c; j ++)
+				cout << m[i][j] << spaceuk;
+			cout << endline;
+		}
+
+	}
+};
+
+using mint = Modular<MODULO>;
+#endif
+/***********************************************************/

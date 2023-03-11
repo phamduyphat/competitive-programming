@@ -1,0 +1,25 @@
+note 27/6/2022:
+ -sparse table:
+f[j][i] : Min của các số a[i] -> a[i + 2 ^ j - 1]
+
+f[0][i] = a[i];
+2 ^ j <= n;
+
+
+implementation:
+	for(j = 1 -> ceil(log2(n)))
+		for(i = 1 -> n - 2 ^ j + 1)
+			f[j][i] = min(f[j - 1][i], f[j - 1][i + 2 ^(j -1)];
+
+
+
+	query(ll,  rr)
+	{
+		d = abs(log2(n - l + 1));
+		return min(f[d][l], f[d][n - 2 ^ d + 1];
+	## lưu ý: log của c tốn linear => tạo mảng trc: 
+	int32_t log2[maxN];
+	reset(log2, i);
+	for(t = 0 -> ?) log2[2 ^ t] = t;
+	for(i = 1 -> n) log2[i] = max(log2[i], log2[i - 1]); 
+	

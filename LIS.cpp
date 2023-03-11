@@ -32,7 +32,7 @@ int main() {
 	int val = -1e9 - 1, c = 0;
 	forin(i, 1, n) {
 		if (b[i].first != val) {
-			val = b[i].first;
+			val = b[i].first;	
 			c++;
 		}
 		a[b[i].second] = c;

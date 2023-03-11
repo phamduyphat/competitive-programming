@@ -1,73 +1,77 @@
-	
-#include <algorithm>
-#include <bitset>
-#include <cctype>
-#include <cfloat>
-#include <climits>
-#include <cmath>
-#include <complex>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <deque>
-#include <functional>
-#include <iostream>
-#include <list>
-#include <map>
-#include <numeric>
-#include <queue>
-#include <set>
-#include <stack>
-#include <string>
-#include <utility>
-#include <vector>
-using namespace std;
- 
-typedef pair<int, int> ii;
-typedef vector<ii> vii;
-typedef vector<vii> vvii;
-typedef vector<int> vi;
-typedef vector<vi> vvi;
- 
-#define sz(a) int((a).size())
-#define fi first
-#define se second
-#define pb push_back
-#define mp make_pair
-#define all(c) (c).begin(), (c).end()
-#define tr(c,i) for(typeof((c).begin()) i = (c).begin(), _e = (c).end(); it != _e; ++it)
-#define present(c,x) ((c).find(x) != (c).end())
-#define cpresent(c,x) (find(all(c),x) != (c).end())
-#define rep(i,n) for(int i = 0, _n = (n); i < _n; ++i)
-#define repd(i,n) for(int i = (n)-1; i >= 0; --i )
-#define fo(i,a,b) for(int i = (a), _b = (b); i <= _b; ++i)
-#define fod(i,a,b) for(int i = (a), _b = (b); i >= _b; --i)
- 
-#define INF 1000000000
-#define N 10005
- 
-int a[4][N], n, f[N][11];
-int sts[] = {0,1,2,4,5,8,9,10};
- 
-int main() {
-	freopen( "input.inp", "r", stdin );
-	freopen( "output.out", "w", stdout );
-	scanf( "%d", &n ); rep(i, 4) fo(j,1,n) scanf( "%d", &a[i][j] );
-	fo(j,1,n) {
-		rep(st, 8) {
-			rep(i,4) if(sts[st] & (1<<i)) f[j][sts[st]] += a[i][j];
-			int mx = INT_MIN;
-			rep(st2, 8) if((sts[st] | sts[st2])==(sts[st] ^ sts[st2]))
-					mx = max( f[j-1][sts[st2]], mx );
-			f[j][sts[st]] += mx;
-		}
-	}
-	int mx = INT_MIN;
-	rep(st, 8) mx = max(f[n][sts[st]], mx);
-	int mx2 = INT_MIN;
-	rep(i,4) fo(j,1,n) mx2 = max(mx2, a[i][j]);
-	printf( "%d\n", mx2 < 0 ? mx2 : mx );
-	return 0;
+#include <stdio.h>
+//#include <conio.h>
+
+int main()
+{
+    //freopen("QBSELECT.in","r",stdin);
+    int f[10001][18],a[10001][6],n,max=-100000,KQ=0;
+    scanf("%d",&n);
+    for(int i = 1;i<=4;i++)
+        for(int j = 1;j<=n;j++)
+        {
+            scanf("%d",&a[j][i]);
+            if(max<a[j][i])
+                max = a[j][i];
+        }
+    if(max <=0)
+        printf("%d",max);
+    else
+    {
+        for(int i = 0;i<=15;i++)
+            f[0][i] = 0;
+        int x[5],y[5],u,v,flag,maxx,tong;
+        for(int i = 1;i<=n;i++)
+        {
+            for(int j = 0;j<=15;j++)
+            {
+                u=j;
+                flag = 1;
+                maxx = 0;
+                tong = 0;
+                for(int k = 1;k<=4;k++)
+                {
+                    x[k] = u%2;
+                    u = u/2;
+                    if(k > 1 && x[k]*x[k-1]>0)
+                    {
+                        flag = 0;
+                        break;
+                    }
+                    if(x[k] == 1)
+                       tong = tong + a[i][k];
+                }
+                if(flag ==0)
+                    f[i][j] = 0;
+                else
+                {
+                    for(int k = 0;k<=15;k++)
+                    {
+                        u = k;
+                        flag = 1;
+                        for(int l = 1;l<=4;l++)
+                        {
+                            y[l] = u%2;
+                            u = u/2;
+                            if((l > 1 && y[l]*y[l-1]>0)||(x[l]*y[l]>0))
+                            {
+                                flag = 0;
+                                break;
+                            }
+                        }
+                        if(flag ==1 && f[i-1][k]>maxx)
+                             maxx = f[i-1][k];        
+                    }
+                    f[i][j] = tong + maxx;
+                }
+
+            }
+        }
+        for(int i = 0;i<=15;i++)
+        {
+            if(f[n][i]>KQ)
+                KQ = f[n][i];
+        }
+        printf("%d",KQ);        
+    }
+    //getch();
 }
- 

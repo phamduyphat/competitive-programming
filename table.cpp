@@ -1,44 +1,125 @@
-#include<bits/stdc++.h>
-#define forin(i, a, b) for(int i = a; i <= b; i++)
-#define forde(i, a, b) for(int i = a; i >= b; i--)
-using namespace std;
-const int mod = 12345678;
-struct matrix 
-{
-	long long t[4][4];
+#include <bits/stdc++.h>
+#include <chrono>
+#define sexually_transferred_diseases std			
+using namespace sexually_transferred_diseases;			
+
+#define FOR(i,a,b)      	for(int64_t i=a;i<=b;i++)
+#define fr(i,n)         	for(int64_t i=0;i<n;i++)
+#define fr1(i,n)        	for(int64_t i=1;i<=n;i++)
+#define forv(v, a)			for(auto &v : a)
+#define int					long long 
+#define endline				"\n"
+#define spaceuk				" "
+#define driver				int32_t
+const long long MODULO =	1e9+7;
+const double pi =			acos(-1.0);
+auto start =				chrono::steady_clock::now();
+void finish(){
+    auto end = chrono::steady_clock::now();
+    //cout << "Code run time: ";
+    cout << chrono::duration<double, std::milli>(end - start).count() << "ms" << endl;
+    fclose(stdin);
+    fclose(stdout);
+    return;
+}
+#define MID (ll + (rr - ll) / 2)
+#define Lcon id * 2 + 1, ll, MID
+#define Rcon id * 2 + 2, MID + 1, rr
+class typeQ{
+	public:
+		int32_t x, y, u, v, k, w, ans = 0;
 };
-matrix operator* (matrix a, matrix b) 
+struct segment{
+	int64_t val = 0;
+	int64_t pos;
+};
+segment *st;
+int64_t *pos;
+/*void lazy(int32_t id)
 {
-	matrix c;
-	forin(i, 1, 3) forin(j, 1, 3) 
+	st[id * 2].lazy = st[id].lazy;
+	st[id * 2].val += st[id * 2].lazy;
+
+	st[id * 2 + 1].lazy = st[id].lazy;
+	st[id * 2 + 1].val += st[id * 2 + 1].lazy;
+	
+	st[id].lazy = 0;
+	return;
+}*/
+void update(int32_t id, int32_t ll, int32_t rr, int32_t l, int32_t r, int32_t val)
+{
+	FOR(i, l, r)
 	{
-		c.t[i][j] = 0;
-		forin(k2, 1, 3) c.t[i][j] = (c.t[i][j] + (a.t[i][k2] * b.t[k2][j]) % mod ) % mod;
+		id = pos[i];
+		st[id].val += val;
+		while(id > 0)
+		{
+			id /= 2;
+			st[id].val = st[id * 2 + 1].val + st[id * 2 + 2].val;
+		}
 	}
-	return c;
+	return;
 }
-matrix mu(matrix a, long long p) 
+int64_t Query(int32_t id, int32_t ll, int32_t rr, int32_t l, int32_t r)
 {
-	if (p == 1) return a;
-	matrix tmp = mu(a, p / 2);
-	tmp = tmp * tmp;
-	if (p % 2 == 0) return tmp;
-	else return (tmp*a);
+	if (l > rr || r < ll) return 0;
+	if (ll >= l && rr <= r)
+		return st[id].val;
+
+	return Query(Lcon, l, r) + Query(Rcon, l, r);
 }
-int main()
+void build(int32_t id, int32_t ll, int32_t rr, vector<int64_t> a)
 {
-	matrix x;
-	x.t[1][1] = 1; x.t[1][2] = 1; x.t[1][3] = 1;
-	x.t[2][1] = 1; x.t[2][2] = 0; x.t[2][3] = 1;
-	x.t[3][1] = 1; x.t[3][2] = 1; x.t[3][3] = 0;
-	long long n; cin >> n;
-	if (n == 1) cout << 2;
-	else 
-	{
-		matrix z = mu(x, n - 1);
-		long long s = 0;
-		forin(i, 1, 3) forin(j, 1, 3) s += z.t[i][j], s %= mod;
-		cout << (s - 1 + mod) % mod;
+	if (ll == rr) {
+		st[id].val = a[ll];
+		pos[rr] = id;
+		return;
 	}
+	build(Lcon, a);
+	build(Rcon, a);
+	st[id].val = st[id * 2 + 2].val + st[id * 2 + 1].val;
+}
+/***********************************************************/
+driver main(){
+    ios_base::sync_with_stdio(0), cin.tie(0), cout.tie(0);
+    freopen ("input.inp","r",stdin);
+    freopen ("output.out","w",stdout);
+    //Local variables below this line:
+	int64_t m, n, T;
+	cin >> m >> n >> T;
+	vector<vector<int64_t>> a(m, vector<int64_t> (n));
+	vector<typeQ> query;
+    //code below this line:
     
+	fr(i, m) fr(j, n) cin >> a[i][j];
+	
+	fr(i, T)
+	{
+		typeQ temp;
+		cin >> temp.k;
+		if (temp.k == 1) {cin >> temp.x >> temp.y >> temp.u >> temp.v >> temp.w;}
+		else {cin >> temp.x >> temp.y >> temp.u >> temp.v; temp.w = 0;}
+		query.push_back(temp);
+	}
+	fr1(i, m)
+	{
+		
+		st = new segment[4 * n];
+		pos = new int64_t[n];
+		build(0, 0, n - 1, a[i - 1]);
+		forv(v, query)
+		{
+			if (v.k == 1) 
+				if(v.x <= i && v.u >= i)
+					update(0, 0, n - 1, v.y - 1, v.v - 1, v.w);
+			if (v.k == 2) 
+				if(v.x <= i && v.u >= i)
+					v.ans += Query(0, 0, n - 1, v.y - 1, v.v - 1);
+		}
+		delete [] st;
+		delete [] pos;
+	}
+	forv(v, query) if (v.k == 2) cout << v.ans << endline;
+    finish();
+    return 0;
 }
