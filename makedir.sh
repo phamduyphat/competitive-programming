@@ -5,6 +5,12 @@ Help()
  echo
  echo "Maximum amount of copys: 26"
 }
+if [ "$#" -eq 0 ]
+then
+        #display Help
+        Help
+        exit
+fi
 while getopts ":hv" option; do
    case $option in
       h) # display Help
@@ -20,6 +26,7 @@ while getopts ":hv" option; do
    esac
 done
 directory=$1
+amount=$((1))
 amount=$2
 actual_amount=$((0))
 if [[ -d "$directory" ]]; then

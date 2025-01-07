@@ -731,18 +731,14 @@ int32_t T = 1;
 void solve()
 {
 	//code below this line:
-	int32_t t = uid (1, 100);
-	cout << t << endline;
-	while(t --)
-	{
-		int32_t n = uid(1, 1e6);
-		cout << n << endline;
-	}	
+	int32_t n = 1000000;
+
+	fr1(i, n){	int32_t t = uid(0, 2);cout << char(t + 'A');}
 }
 //Functions content:
 
 // #define task ""
-// #define standard_input 
+#define standard_input 
 #define input_extension ".inp"
 #define output_extension ".out"
 driver main(int32_t argc, char *argv[]){

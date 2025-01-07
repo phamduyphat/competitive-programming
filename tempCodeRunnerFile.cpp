@@ -169,59 +169,33 @@ int64_t Modular_exponentiation(int64_t a, int64_t b)
 void test_cases(int64_t &T);
 /***********************************************************/
 //Global variables below this line:
-int32_t p = 31;
+
 /***********************************************************/
 //Functions declarations:
-int64_t compute_hash_forward(string &s)
-{
-    int64_t res = 0;
-    fr(i, s.size())
-    {
-        res = Modular_multiplication(res, p) - 'a' + s[i] + 1;
-    }
-    return res % MODULO;
-}
-int64_t compute_hash_backward(string &s)
-{
-    int64_t res = 0;
-    FORD(i, s.size() - 1, 0)
-    {
-        res = Modular_multiplication(res, p) - 'a' + s[i] + 1;
-    }
-    return res % MODULO;
-}
-bool check_palindrome(string &s)
-{
-    string temp1 = s.substr(0, s.size() / 2);
-    string temp2 = s.substr(s.size() - s.size() / 2, s.size() / 2);
-    if (compute_hash_forward(temp1) == compute_hash_backward(temp2)) 
-        return true;
-    else 
-        return false;
-}
+
 /***********************************************************/
 void solve(int64_t test_cases)
 {
     //code below this line:
-    vector<int32_t> a;
-    FOR(i, 0, 23)
+    int32_t a, b;
+    cin >> a >> b;
+    int64_t sum = a - b * 2;
+    if (sum == 0)
     {
-        FOR (j, 0, 59)
-        {
-            string  x = to_string(i),
-                    y = to_string(j);
-            if (x.size() == 1)
-                x = '0' + x;
-            if (y.size() == 1)
-                y = '0' + y;
-            string temp = x + y;
-            if (check_palindrome(temp)) 
-                a.pb(stoi(temp)); 
-        }
-    }  
-    string input; cin >> input;
-    string x = input[0] + input[1] + input[3] + input[4];
-    cout << *upper_bound(a.begin(), a.end(), x) << endline;
+        cout << "yes" << endline;
+        return;
+    }
+    else if (sum > 0)
+    {
+        sum % 2 == 0 ? cout << "yes" << endline : cout << "no" << endline;
+        return;
+    }
+    else{
+        sum = -sum;
+       
+        sum % 4 == 0 ? cout << "yes" << endline : cout << "no" << endline;
+        return;
+    }
 }
 //Functions content:
 
@@ -269,5 +243,5 @@ driver main(int32_t argc, char *argv[]){
     return 0;
 }
 void test_cases(int64_t &T){
-    // cin >> T;
+    cin >> T;
 }
